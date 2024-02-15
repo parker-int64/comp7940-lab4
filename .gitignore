@@ -1,0 +1,10 @@
+# .venv
+.venv
+
+
+# config files.
+config.*
+
+
+# Test files
+*test*
