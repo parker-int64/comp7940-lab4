@@ -8,3 +8,7 @@ config.*
 
 # Test files
 *test*
+
+
+# Cache files
+__pycache__
