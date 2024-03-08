@@ -1,5 +1,5 @@
 configparser
-logging
+# logging this is not required for python3
 redis
 requests
 python-telegram-bot
