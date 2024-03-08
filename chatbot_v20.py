@@ -1,5 +1,5 @@
 # coding=utf-8
-import configparser
+import os
 import logging
 import redis
 from telegram import ForceReply, Update
@@ -140,18 +140,15 @@ def init_redis(host: str, port: int, passwd: str) -> None:
 def main() -> None:
     """Start the bot."""
 
-    config = configparser.ConfigParser()
-    config.read("config.ini")
 
     # Read the token from local config file
-    tel_access_token = config["TELEGRAM"]["ACCESS_TOKEN"]
-
-
+    
+    tel_access_token = os.environ["TELEGRAM_ACCESS_TOKEN"]
 
     # Redis database
-    redis_host   = config["REDIS"]["HOST"]
-    redis_port   = config["REDIS"]["REDIS_PORT"]
-    redis_passwd = config["REDIS"]["PASSWORD"]
+    redis_host   = os.environ["REDIS_HOST"]
+    redis_port   = os.environ["REDIS_PORT"]
+    redis_passwd = os.environ["REDIS_PASSWD"]
 
     init_redis(redis_host, redis_port, redis_passwd)
 
@@ -168,24 +165,27 @@ def main() -> None:
 
     application.add_handler(CommandHandler("hello", hello_command))
 
+    # We use chatgpt for test this time
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, equipped_chatgpt))
 
-    logging.info("Do you want to enable ChatGPT [Yes / No] (Default = No): ")
 
-    ans = input()
+    # logging.info("Do you want to enable ChatGPT [Yes / No] (Default = No): ")
 
-    if  ans in ('Yes', 'YES', 'yes', 'Y', 'y'):
-        # on non command i.e message - using chatgpt.
-        logging.info("Using ChatGPT")
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, equipped_chatgpt))
-    elif ans in ('No', 'NO', 'no', 'N', 'n'):
-        # on non command i.e message - echo the message on Telegram
-        logging.info("Echo message only")
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
-    else:
-        logging.warning("Please type 'Yes', 'Y', 'y','yes' or 'No', 'no', 'N', 'n'\n "
-                        "Input directionality is unknown, default is used\n"
-                        "Try rerun the program with correct input if you want to enable ChatGPT")
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    # ans = input()
+
+    # if  ans in ('Yes', 'YES', 'yes', 'Y', 'y'):
+    #     # on non command i.e message - using chatgpt.
+    #     logging.info("Using ChatGPT")
+    #     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, equipped_chatgpt))
+    # elif ans in ('No', 'NO', 'no', 'N', 'n'):
+    #     # on non command i.e message - echo the message on Telegram
+    #     logging.info("Echo message only")
+    #     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    # else:
+    #     logging.warning("Please type 'Yes', 'Y', 'y','yes' or 'No', 'no', 'N', 'n'\n "
+    #                     "Input directionality is unknown, default is used\n"
+    #                     "Try rerun the program with correct input if you want to enable ChatGPT")
+    #     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     # Run the bot until the user presses Ctrl-C      
     logging.info("Press Ctrl + C to stop the program")

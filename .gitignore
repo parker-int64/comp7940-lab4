@@ -9,6 +9,8 @@ config.*
 # Test files
 *test*
 
+# Old chatbot
+chatbot.py
 
 # Cache files
 __pycache__

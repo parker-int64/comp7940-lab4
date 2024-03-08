@@ -1,13 +1,15 @@
-import configparser
 import requests
-
+import os
 class HKBUChatGPT():
     def __init__(self,config_='./config.ini'):
-        if isinstance(config_, str):
-            self.config = configparser.ConfigParser()
-            self.config.read(config_)
-        elif isinstance(config_, configparser.ConfigParser):
-            self.config = config_
+        """
+            since we used the flyio secret. config file is no longer required
+        """
+        # if isinstance(config_, str):
+        #     self.config = configparser.ConfigParser()
+        #     self.config.read(config_)
+        # elif isinstance(config_, configparser.ConfigParser):
+        #     self.config = config_
 
     def submit(self, message: str) -> str:
         """
@@ -15,10 +17,10 @@ class HKBUChatGPT():
         """
         conversation = [{"role": "user", "content": message}]
 
-        base_url     = self.config['CHATGPT']['BASE_URL']
-        model_name   = self.config['CHATGPT']['MODEL_NAME']
-        api_version  = self.config['CHATGPT']['API_VERSION']
-        access_token = self.config['CHATGPT']['ACCESS_TOKEN']
+        base_url     = os.environ["CHATGPT_BASE_URL"]
+        model_name   = os.environ["CHATGPT_MODEL_NAME"]
+        api_version  = os.environ["CHATGPT_API_VERSION"]
+        access_token = os.environ["CHATGPT_ACCESS_TOKEN"]
 
         # HKBU ChatGPT request full URL
         url = f"{base_url}/deployments/{model_name}/chat/completions/?api-version={api_version}"
